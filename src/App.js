@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import style from "./App.css";
 import { GetExchangeRate } from "./Api/Exchange_rate";
 import {
   Box,

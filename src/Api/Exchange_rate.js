@@ -1,7 +1,5 @@
 import axois from "axios";
 
-const url_api = "https://api.exchangerate-api.com/v4/latest/";
-
 export const GetExchangeRate = async (currency) => {
   if (!currency) {
     currency = "USD";
