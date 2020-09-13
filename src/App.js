@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { GetExchangeRate } from "./Api/Exchange_rate";
+import "./App.css";
 import {
-  Box,
   Button,
   TextField,
   Select,
@@ -9,27 +9,21 @@ import {
   Card,
   CardContent,
   Typography,
-  makeStyles,
 } from "@material-ui/core";
 
-const useStyles = makeStyles({
-  root: {
-    maxWidth: 600,
-  },
-});
-
 function App() {
-  const classes = useStyles();
-  let [FromCurrency, setFromCurrency] = useState("");
-  let [ToCurrency, setToCurrency] = useState("");
-  let [rate, setRate] = useState(0.0);
+  let [FromCurrency, setFromCurrency] = useState("USD");
+  let [ToCurrency, setToCurrency] = useState("THB");
+  let [rate, setRate] = useState();
   let [fromValue, setFromValue] = useState(1);
   let [result, setResult] = useState(0);
 
+  useEffect(()=>{
+    GetExchange();
+  },[FromCurrency,ToCurrency,fromValue]);
+
   const GetExchange = async () => {
     let data = await GetExchangeRate(FromCurrency);
-
-    // console.log(data);
 
     if (!ToCurrency) {
       ToCurrency = "THB";
@@ -38,28 +32,32 @@ function App() {
     setRate(() => (rate = data.rates[ToCurrency].toFixed(2)));
 
     setResult(() => (result = (rate * fromValue).toFixed(2)));
+  };
 
-    console.log(result);
+  const GetSwap = () => {
+    const fromC = FromCurrency;
+    const toC = ToCurrency;
+
+    setFromCurrency(toC);
+    setToCurrency(fromC);
   };
 
   return (
-    <Box display="flex" flexDirection="column" flexWrap="wrap" justifyContent="center" alignItems="center">
-      <Card className={classes.root}>
+    <div className="container">
+      <Card className="container__card">
         <CardContent>
-          <Box m={1}>
-            <Typography variant="h5" component="h2">
-              Exhange Rate Calculator
-            </Typography>
-            <Typography color="textSecondary">
-              Choose the currency and the amounts to get the exchange rate
-            </Typography>
-          </Box>
+          <div className="header">
+            <p className="textPrimary">Exhange Rate</p>
+          </div>
           {/* From Currency */}
-          <Box m={1}>
+          <div>
             <Typography variant="body2" component="p">
               <Select
-                id="FromCurrency" defaultValue="USD"
+                id="FromCurrency"
+                defaultValue="USD"
+                value={FromCurrency}
                 onChange={(e) => setFromCurrency(e.target.value)}
+                className="dropdown"
               >
                 <MenuItem value="AED">AED</MenuItem>
                 <MenuItem value="ARS">ARS</MenuItem>
@@ -118,30 +116,20 @@ function App() {
                 placeholder="0"
                 type="number"
                 value={fromValue}
+                className="text"
                 onChange={(e) => setFromValue(e.target.value)}
               />
             </Typography>
-          </Box>
-          {/* Exchange */}
-          <Box m={1} display="flex" justifyContent="flex-end">
-            <Typography variant="body2" component="div">
-              <Button
-                id="btnExchange"
-                variant="contained"
-                color="primary"
-                onClick={GetExchange}
-              >
-                Exchange
-              </Button>
-              <label id="swap_rate">{rate}</label> Rate
-            </Typography>
-          </Box>
+          </div>
           {/* To Currency */}
-          <Box m={1}>
+          <div>
             <Typography variant="body2" component="p">
               <Select
-                id="ToCurrency" defaultValue="THB"
+                id="ToCurrency"
+                defaultValue="THB"
+                value={ToCurrency}
                 onChange={(e) => setToCurrency(e.target.value)}
+                className="dropdown"
               >
                 <MenuItem value="AED">AED</MenuItem>
                 <MenuItem value="ARS">ARS</MenuItem>
@@ -196,12 +184,52 @@ function App() {
                 <MenuItem value="VND">VND</MenuItem>
                 <MenuItem value="ZAR">ZAR</MenuItem>
               </Select>
-              <TextField placeholder="0" type="number" value={result} />
+              <TextField
+                placeholder="0"
+                type="number"
+                value={result}
+                className="text"
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
             </Typography>
-          </Box>
+          </div>
+          {/* Exchange */}
+          <div className="control">
+            <TextField
+              id="swap_rate"
+              className="textRate"
+              label="Rate"
+              value={rate}
+              defaultValue="0.00"
+              InputProps={{
+                readOnly: true,
+              }}
+              variant="outlined"
+            />
+            <Button
+              id="btnSwap"
+              variant="contained"
+              color="primary"
+              onClick={GetSwap}
+              className="swapButton"
+            >
+              Swap
+            </Button>
+            <Button
+              id="btnExchange"
+              variant="contained"
+              color="primary"
+              className="exchangeButton"
+              onClick={GetExchange}
+            >
+              Exchange
+            </Button>
+          </div>
         </CardContent>
       </Card>
-    </Box>
+    </div>
   );
 }
 
