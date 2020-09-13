@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { GetExchangeRate } from "./Api/Exchange_rate";
 import "./App.css";
 import {
@@ -18,21 +18,23 @@ function App() {
   let [fromValue, setFromValue] = useState(1);
   let [result, setResult] = useState(0);
 
-  useEffect(()=>{
-    GetExchange();
-  },[FromCurrency,ToCurrency,fromValue]);
+  // const GetExchange = async () => {
+  //   let data = await GetExchangeRate(FromCurrency);
+  //   setRate(() => (rate = data.rates[ToCurrency].toFixed(2)));
+  //   setResult(() => (result = (rate * fromValue).toFixed(2)));
+  // };
 
-  const GetExchange = async () => {
-    let data = await GetExchangeRate(FromCurrency);
+  useEffect(() => {
+    async function Exchange() {
+      const data = await GetExchangeRate(FromCurrency);
+      const fetchRate = data.rates[ToCurrency].toFixed(2);
+      const fetchResult = (fetchRate * fromValue).toFixed(2);
 
-    if (!ToCurrency) {
-      ToCurrency = "THB";
-    }
-
-    setRate(() => (rate = data.rates[ToCurrency].toFixed(2)));
-
-    setResult(() => (result = (rate * fromValue).toFixed(2)));
-  };
+      setRate(fetchRate);
+      setResult(fetchResult);
+    };
+    Exchange();
+  }, [FromCurrency, ToCurrency, fromValue]);
 
   const GetSwap = () => {
     const fromC = FromCurrency;
@@ -217,7 +219,7 @@ function App() {
             >
               Swap
             </Button>
-            <Button
+            {/* <Button
               id="btnExchange"
               variant="contained"
               color="primary"
@@ -225,7 +227,7 @@ function App() {
               onClick={GetExchange}
             >
               Exchange
-            </Button>
+            </Button> */}
           </div>
         </CardContent>
       </Card>
