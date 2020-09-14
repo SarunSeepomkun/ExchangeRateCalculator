@@ -27,8 +27,8 @@ function App() {
   useEffect(() => {
     async function Exchange() {
       const data = await GetExchangeRate(FromCurrency);
-      const fetchRate = data.rates[ToCurrency].toFixed(2);
-      const fetchResult = (fetchRate * fromValue).toFixed(2);
+      const fetchRate = data.rates[ToCurrency].toFixed(6);
+      const fetchResult = (fetchRate * fromValue).toFixed(6);
 
       setRate(fetchRate);
       setResult(fetchResult);
